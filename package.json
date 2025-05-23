@@ -1,16 +1,16 @@
 {
   "name": "real-estate-listing-intelligence-api",
   "version": "1.0.0",
-  "description": "Real Estate Listing API with CORS and user-agent spoofing",
+  "description": "Real Estate API with Puppeteer-based scraping",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "axios": "^1.6.7",
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "puppeteer": "^21.3.8"
   }
 }
