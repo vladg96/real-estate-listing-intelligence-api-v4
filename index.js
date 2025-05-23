@@ -1,7 +1,7 @@
 const express = require('express');
-const axios = require('axios');
 const cheerio = require('cheerio');
 const cors = require('cors');
+const puppeteer = require('puppeteer');
 require('dotenv').config();
 
 const app = express();
@@ -19,15 +19,17 @@ app.get('/analyze-url', async (req, res) => {
   if (!url) return res.status(400).json({ error: 'Missing ?url=' });
 
   try {
-    const response = await axios.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36'
-      }
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
-    const html = response.data;
+    const html = await page.content();
+    await browser.close();
+
     const $ = cheerio.load(html);
-
     const imageUrls = [];
     $('img').each((i, el) => {
       const src = $(el).attr('src');
@@ -40,12 +42,13 @@ app.get('/analyze-url', async (req, res) => {
 
     res.json({
       source: url,
-      description,
+      description: description || "No description found.",
       imageUrls: imageUrls.slice(0, 5),
-      message: 'Data scraped. Ready for AI tagging.'
+      message: 'Data scraped using Puppeteer. Ready for AI tagging.'
     });
 
   } catch (error) {
+    console.error("❌ Puppeteer scrape error:", error.message);
     res.status(500).json({ error: 'Failed to fetch or parse the URL', details: error.message });
   }
 });
