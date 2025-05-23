@@ -1,7 +1,7 @@
 {
   "name": "real-estate-listing-intelligence-api",
   "version": "1.0.0",
-  "description": "Production-ready Real Estate Listing API with CORS",
+  "description": "Real Estate Listing API with CORS and user-agent spoofing",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
